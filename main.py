@@ -5,6 +5,10 @@ import urllib.parse
 
 app = FastAPI()
 
+@app.get("/")
+def root():
+    return {"message": "API clientes ativa!"}
+
 @app.post("/clientes")
 async def add_cliente(request: Request):
     dados = await request.json()
