@@ -14,6 +14,7 @@ async def add_cliente(request: Request):
     dados = await request.json()
     nome = dados.get("nome")
     idade = dados.get("idade")
+    print("PORT:", os.environ.get("PORT"))
 
     # Pega a URL do Railway
     db_url = os.environ["DATABASE_URL"]
