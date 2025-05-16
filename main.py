@@ -15,11 +15,7 @@ async def add_cliente(request: Request):
     nome = dados.get("nome")
     idade = dados.get("idade")
 
-    print("PORT:", os.environ.get("PGPORT"))
-
-    # Pega a URL do Railway
     db_url = os.environ["DATABASE_URL"]
-    # Conecta usando a URL diretamente
     conn = psycopg2.connect(db_url)
 
     cur = conn.cursor()
@@ -31,5 +27,5 @@ async def add_cliente(request: Request):
     return {"status": "ok", "dados": dados}
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PGPORT", 8000))
+    port = int(os.environ.get("PORT", 8000))  # Vai pegar variável PORT ou 8000
     uvicorn.run("main:app", host="0.0.0.0", port=port)
