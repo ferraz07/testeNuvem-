@@ -7,7 +7,7 @@ app = FastAPI()
 
 @app.get("/")
 def root():
-    return {"message": "API clientes ativa!"}
+    return {"message": "API ativa!"}
 
 @app.post("/clientes")
 async def add_cliente(request: Request):
