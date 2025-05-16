@@ -14,12 +14,13 @@ async def add_cliente(request: Request):
     dados = await request.json()
     nome = dados.get("nome")
     idade = dados.get("idade")
+    plano = dados.get("plano")
 
     db_url = os.environ["DATABASE_URL"]
     conn = psycopg2.connect(db_url)
 
     cur = conn.cursor()
-    cur.execute("INSERT INTO clientes (nome, idade) VALUES (%s, %s)", (nome, idade))
+    cur.execute("INSERT INTO clientes (nome, idade, plano) VALUES (%s, %s, %s)", (nome, idade, plano))
     conn.commit()
     cur.close()
     conn.close()
