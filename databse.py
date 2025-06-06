@@ -1,10 +1,21 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-import os
+import psycopg2
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+conn = psycopg2.connect(
+    dbname="railway",
+    user="postgres",
+    password="xOkwAHOpXeOwDabcREDkVVdwGSivRyDE",
+    host="postgres.railway.internal",
+    port="5432"
+)
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
-Base = declarative_base()
+cur = conn.cursor()
+
+# Coloque o conteúdo do seu SQL aqui (ou leia de um arquivo .sql)
+with open("SQLQuery_2.sql", "r") as file:
+    sql_script = file.read()
+
+cur.execute(sql_script)
+conn.commit()
+
+cur.close()
+conn.close()
