@@ -1,9 +1,10 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 import os
 
 app = FastAPI()
+router = APIRouter()
 
 # Permitir acesso do front-end (CORS)
 app.add_middleware(
@@ -13,6 +14,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@router.post("/init-db")
+def init_db():
+    conn = psycopg2.connect(
+        dbname="railway",
+        user="postgres",
+        password="xOkwAHOpXeOwDabcREDkVVdwGSivRyDE",
+        host="postgres.railway.internal",
+        port="5432"
+    )
+    cur = conn.cursor()
+    with open("SQLQuery_2.sql", "r") as file:
+        sql_script = file.read()
+
+    cur.execute(sql_script)
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"message": "Database initialized"}
 
 def conectar():
     return psycopg2.connect(os.environ["DATABASE_URL"])
