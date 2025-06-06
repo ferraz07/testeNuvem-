@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 import os
-from db_init import router as db_router  # importa seu novo router
+from databse import router as db_router  # importa seu novo router
 
 app = FastAPI()
 
