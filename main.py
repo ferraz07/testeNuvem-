@@ -24,16 +24,27 @@ def root():
 @app.post("/clientes")
 async def add_cliente(request: Request):
     dados = await request.json()
-    conn = conectar()
+    nome = dados.get("nome")
+    idade = dados.get("idade")
+    plano = dados.get("plano")
+    email = dados.get("email")
+    nascimento = dados.get("nascimento")  # Novo campo
+    senha = dados.get("senha")  # Novo campo
+
+    db_url = os.environ["DATABASE_URL"]
+    conn = psycopg2.connect(db_url)
+
     cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO clientes (nome, idade, plano, email, data, status) VALUES (%s, %s, %s, %s, %s, %s)",
-        (dados["nome"], dados["idade"], dados["plano"], dados["email"], dados["data"], dados["status"])
-    )
+    cur.execute("""
+        INSERT INTO clientes (nome, idade, plano, email, nascimento, senha)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, (nome, idade, plano, email, nascimento, senha))
     conn.commit()
     cur.close()
     conn.close()
-    return {"status": "ok"}
+
+    return {"status": "ok", "dados": dados}
+
 
 @app.get("/clientes")
 def listar_clientes():
