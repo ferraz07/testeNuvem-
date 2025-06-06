@@ -14,7 +14,7 @@ def init_db():
         port="5432"
     )
     cur = conn.cursor()
-    with open("SQLQuery_2.sql", "r") as file:
+    with open("SQLQuery_Post.sql", "r") as file:
         sql_script = file.read()
     cur.execute(sql_script)
     conn.commit()
