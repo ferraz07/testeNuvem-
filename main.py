@@ -19,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@router.post("/init-db")
+@db_router.post("/init-db")
 def init_db():
     conn = psycopg2.connect(
         dbname="railway",
