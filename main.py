@@ -28,7 +28,7 @@ async def add_cliente(request: Request):
     idade = dados.get("idade")
     plano = dados.get("plano")
     email = dados.get("email")
-    nascimento = dados.get("nascimento")  # Novo campo
+    data = dados.get("data")  # Novo campo
     senha = dados.get("senha")  # Novo campo
 
     db_url = os.environ["DATABASE_URL"]
@@ -36,9 +36,9 @@ async def add_cliente(request: Request):
 
     cur = conn.cursor()
     cur.execute("""
-        INSERT INTO clientes (nome, idade, plano, email, nascimento, senha)
+        INSERT INTO clientes (nome, idade, plano, email, data, senha)
         VALUES (%s, %s, %s, %s, %s, %s)
-    """, (nome, idade, plano, email, nascimento, senha))
+    """, (nome, idade, plano, email, data, senha))
     conn.commit()
     cur.close()
     conn.close()
