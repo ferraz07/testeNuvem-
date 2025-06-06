@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS Agenda;
 DROP TABLE IF EXISTS Medico;
 DROP TABLE IF EXISTS Paciente;
 DROP TABLE IF EXISTS Usuario;
-GO
+--GO
 
 -- Tabela de Usuários (Base)
 CREATE TABLE Usuario (
@@ -13,7 +13,7 @@ CREATE TABLE Usuario (
     Email NVARCHAR(255) UNIQUE NOT NULL,
     Senha NVARCHAR(255) NOT NULL
 );
-GO
+--GO
 
 -- Tabela de Médicos
 CREATE TABLE Medico (
@@ -30,7 +30,7 @@ CREATE TABLE Medico (
     CEP VARCHAR(9),
     CONSTRAINT FK_Medico_Usuario FOREIGN KEY (UsuarioID) REFERENCES Usuario(ID) ON DELETE CASCADE
 );
-GO
+--GO
 
 -- Tabela de Pacientes
 CREATE TABLE Paciente (
@@ -40,7 +40,7 @@ CREATE TABLE Paciente (
     CPF VARCHAR(11) UNIQUE NOT NULL,
     CONSTRAINT FK_Paciente_Usuario FOREIGN KEY (UsuarioID) REFERENCES Usuario(ID) ON DELETE CASCADE
 );
-GO
+--GO
 
 -- Tabela de Agendamentos
 CREATE TABLE Agenda (
@@ -53,7 +53,7 @@ CREATE TABLE Agenda (
     CONSTRAINT FK_Agenda_Medico FOREIGN KEY (MedicoID) REFERENCES Medico(UsuarioID),
     CONSTRAINT FK_Agenda_Paciente FOREIGN KEY (PacienteID) REFERENCES Paciente(UsuarioID)
 );
-GO
+--GO
 
 -- =======================================================
 -- NOVAS TABELAS PARA O CHAT
@@ -68,7 +68,7 @@ CREATE TABLE Conversa (
     CONSTRAINT FK_Conversa_Paciente FOREIGN KEY (PacienteUsuarioID) REFERENCES Paciente(UsuarioID),
     CONSTRAINT UQ_Conversa_Medico_Paciente UNIQUE (MedicoUsuarioID, PacienteUsuarioID) -- Garante que só exista uma conversa por par médico-paciente
 );
-GO
+--GO
 
 -- Tabela para armazenar cada mensagem de uma conversa
 CREATE TABLE Mensagem (
@@ -81,6 +81,6 @@ CREATE TABLE Mensagem (
     CONSTRAINT FK_Mensagem_Conversa FOREIGN KEY (ConversaID) REFERENCES Conversa(ID),
     CONSTRAINT FK_Mensagem_Remetente FOREIGN KEY (RemetenteUsuarioID) REFERENCES Usuario(ID)
 );
-GO
+--GO
 
 PRINT 'Tabelas (incluindo Chat) criadas com sucesso!';
