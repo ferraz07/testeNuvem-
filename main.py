@@ -37,8 +37,45 @@ class Mensagem(BaseModel):
     conversa_id: int
     remetente_usuario_id: int
     texto: str
+    
+class PacienteComUsuario(BaseModel):
+    email: str
+    senha: str
+    nome: str
+    cpf: str
+    data_nascimento: str  # formato 'YYYY-MM-DD'
 
 # ==== USUARIO ====
+
+@app.post("/pacientes-com-usuario")
+def cadastrar_paciente_com_usuario(dados: PacienteComUsuario):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    try:
+        # 1. Inserir na tabela Usuario
+        cur.execute(
+            "INSERT INTO Usuario (Email, Senha) VALUES (%s, %s) RETURNING ID",
+            (dados.email, dados.senha)
+        )
+        usuario_id = cur.fetchone()[0]
+
+        # 2. Inserir na tabela Paciente com o ID retornado
+        cur.execute(
+            "INSERT INTO Paciente (UsuarioID, Nome, CPF, DataNascimento) VALUES (%s, %s, %s, %s)",
+            (usuario_id, dados.nome, dados.cpf, dados.data_nascimento)
+        )
+
+        conn.commit()
+        return {"mensagem": "Paciente cadastrado com sucesso!", "usuario_id": usuario_id}
+
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        cur.close()
+        conn.close()
 
 @app.post("/usuarios")
 def criar_usuario(usuario: Usuario):
