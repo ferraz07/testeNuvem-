@@ -171,9 +171,8 @@ async def login(request: Request):
     dados = await request.json()
     email = dados.get("email")
     senha = dados.get("senha")
-
-    db_url = os.environ["DATABASE_URL"]
-    conn = psycopg2.connect(db_url)
+    
+    conn = get_connection()
     cur = conn.cursor()
 
     cur.execute("SELECT ID FROM Usuario WHERE Email = %s AND Senha = %s", (email, senha))
