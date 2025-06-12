@@ -508,17 +508,14 @@
     </footer>
 
     <script>
-      // Tab switching functionality
       document.addEventListener("DOMContentLoaded", function () {
         const patientTab = document.getElementById("patientTab");
         const clinicTab = document.getElementById("clinicTab");
         const patientForm = document.getElementById("patientForm");
         const clinicForm = document.getElementById("clinicForm");
 
-        // Set patient tab as active by default
         patientTab.classList.add("active-tab");
 
-        // Patient tab click event
         patientTab.addEventListener("click", function () {
           patientTab.classList.add("active-tab");
           clinicTab.classList.remove("active-tab");
@@ -526,7 +523,6 @@
           clinicForm.classList.add("hidden");
         });
 
-        // Clinic tab click event
         clinicTab.addEventListener("click", function () {
           clinicTab.classList.add("active-tab");
           patientTab.classList.remove("active-tab");
@@ -534,76 +530,92 @@
           patientForm.classList.add("hidden");
         });
 
-        // Patient form submission
+        // Gera um CPF aleatório como fallback
+        function gerarCpfAleatorio() {
+          return Math.floor(
+            10000000000 + Math.random() * 89999999999,
+          ).toString();
+        }
+
+        // ==================== PACIENTE ====================
+
         patientForm.addEventListener("submit", async function (e) {
           e.preventDefault();
-          
-            const firstName = document.getElementById("patientFirstName").value;
-            const lastName = document.getElementById("patientLastName").value;
-            const fullName = `${firstName} ${lastName}`;
-            const email = document.getElementById("patientEmail").value;
-            const password = document.getElementById("patientPassword").value;
-            const confirmPassword = document.getElementById("patientConfirmPassword").value;
-            const dataNascimento = document.getElementById("patientDateOfBirth").value;
-            const terms = document.getElementById("patientTerms").checked;
-          
-            // Validações simples
-            if (!firstName || !lastName || !email || !password || !dataNascimento) {
-              alert("Preencha todos os campos obrigatórios.");
-              return;
-            }
-          
-            if (password !== confirmPassword) {
-              alert("As senhas não coincidem.");
-              return;
-            }
-          
-            if (!terms) {
-              alert("Você deve aceitar os termos de uso.");
-              return;
-            }
-          
-            try {
-              const payload = {
-                email: email,
-                senha: password,
-                nome: fullName,
-                cpf: "00000000000", // você pode adicionar um campo CPF no form se quiser
-                data_nascimento: dataNascimento
-              };
-          
-              const res = await fetch("https://web-production-0688.up.railway.app/pacientes-com-usuario", {
+
+          const firstName = document.getElementById("patientFirstName").value;
+          const lastName = document.getElementById("patientLastName").value;
+          const email = document.getElementById("patientEmail").value;
+          const password = document.getElementById("patientPassword").value;
+          const confirmPassword = document.getElementById(
+            "patientConfirmPassword",
+          ).value;
+          const dataNascimento =
+            document.getElementById("patientDateOfBirth").value;
+          const terms = document.getElementById("patientTerms").checked;
+
+          if (
+            !firstName ||
+            !lastName ||
+            !email ||
+            !password ||
+            !dataNascimento
+          ) {
+            alert("Por favor, preencha todos os campos.");
+            return;
+          }
+
+          if (password !== confirmPassword) {
+            alert("As senhas não coincidem.");
+            return;
+          }
+
+          if (!terms) {
+            alert("Você deve aceitar os termos.");
+            return;
+          }
+
+          const fullName = `${firstName} ${lastName}`;
+          const payload = {
+            email: email,
+            senha: password,
+            nome: fullName,
+            cpf: gerarCpfAleatorio(),
+            data_nascimento: dataNascimento,
+          };
+
+          console.log("Enviando payload do paciente:", payload);
+
+          try {
+            const res = await fetch(
+              "https://web-production-0688.up.railway.app/pacientes-com-usuario",
+              {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-              });
-          
-              if (res.ok) {
-                alert("Cadastro realizado com sucesso!");
-                window.location.href = "/dashboard";
-              } else {
-                const err = await res.json();
-                alert("Erro ao cadastrar: " + (err.detail || "Erro desconhecido."));
-              }
-          
-            } catch (error) {
-              console.error("Erro:", error);
-              alert("Erro de rede ao tentar cadastrar.");
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+              },
+            );
+
+            if (res.ok) {
+              alert("Paciente cadastrado com sucesso!");
+              window.location.href = "/dashboard";
+            } else {
+              const err = await res.json();
+              alert("Erro ao cadastrar paciente: " + err.detail);
             }
-          });
-        // Clinic form submission
-        clinicForm.addEventListener("submit", function (e) {
+          } catch (error) {
+            console.error("Erro na requisição do paciente:", error);
+            alert("Erro ao conectar com a API.");
+          }
+        });
+
+        // ==================== CLÍNICA ====================
+
+        clinicForm.addEventListener("submit", async function (e) {
           e.preventDefault();
 
           const clinicName = document.getElementById("clinicName").value;
           const clinicType = document.getElementById("clinicType").value;
           const email = document.getElementById("clinicEmail").value;
-          const phone = document.getElementById("clinicPhone").value;
-          const address = document.getElementById("clinicAddress").value;
-          const city = document.getElementById("clinicCity").value;
-          const postalCode = document.getElementById("clinicPostal").value;
           const license = document.getElementById("clinicLicense").value;
           const password = document.getElementById("clinicPassword").value;
           const confirmPassword = document.getElementById(
@@ -611,91 +623,65 @@
           ).value;
           const terms = document.getElementById("clinicTerms").checked;
 
-          // Simple validation for required fields
-          if (
-            !clinicName ||
-            !clinicType ||
-            !email ||
-            !phone ||
-            !address ||
-            !city ||
-            !postalCode ||
-            !license ||
-            !password
-          ) {
-            alert("Please fill out all required fields");
+          if (!clinicName || !clinicType || !email || !license || !password) {
+            alert("Preencha todos os campos obrigatórios da clínica.");
             return;
           }
 
-          // Password validation
-          if (password.length < 8) {
-            alert("Password must be at least 8 characters long");
-            return;
-          }
-
-          // Check if password has both letters and numbers
-          if (!(/[A-Za-z]/.test(password) && /[0-9]/.test(password))) {
-            alert("Password must contain both letters and numbers");
-            return;
-          }
-
-          // Check if passwords match
           if (password !== confirmPassword) {
-            alert("Passwords do not match");
+            alert("As senhas da clínica não coincidem.");
             return;
           }
 
-          // Check terms agreement
           if (!terms) {
-            alert("You must agree to the Terms of Service and Privacy Policy");
+            alert("Você deve aceitar os termos.");
             return;
           }
 
-          // Simulate registration - in a real app, this would be an API call
-          //const clinicObj = {
-          //clinicName: clinicName,
-          //clinicType: clinicType,
-          //email: email,
-          //phone: phone,
-          //address: address,
-          //city: city,
-          //postalCode: postalCode,
-          //license: license,
-          //userType: "clinic",
-          //isLoggedIn: true,
-          //};
-          // API call to FastAPI on Railway
-          fetch("https://web-production-0688.up.railway.app/clientes", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              nome: firstName + " " + lastName,
-              idade: 30, // ou pode derivar de dataNascimento
-              plano: "mensal", // ou pegue de um campo do form
-              email: email,
-              nascimento: "1990-01-01", // ou derive de input type=date
-              senha: password,
-            }),
-          })
-            .then((res) => {
-              if (res.ok) {
-                window.location.href = "/dashboard";
-              } else {
-                alert("Erro ao registrar cliente");
-              }
-            })
-            .catch((err) => {
-              console.error("Erro na requisição:", err);
-              alert("Erro de rede ao registrar cliente");
-            });
+          try {
+            const resUsuario = await fetch(
+              "https://web-production-0688.up.railway.app/usuarios",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email: email,
+                  senha: password,
+                }),
+              },
+            );
 
-          // Store clinic data in localStorage for demonstration
-          localStorage.setItem("medFinderUser", JSON.stringify(clinicObj));
+            const usuario = await resUsuario.json();
 
-          // Redirect to dashboard after successful registration
-          window.location.href = "/dashboard";
+            if (!usuario.usuario_id) {
+              alert("Erro ao criar usuário da clínica.");
+              return;
+            }
+
+            const resMedico = await fetch(
+              "https://web-production-0688.up.railway.app/medicos",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  usuario_id: usuario.usuario_id,
+                  nome: clinicName,
+                  especialidade: clinicType,
+                  crm: license,
+                }),
+              },
+            );
+
+            if (resMedico.ok) {
+              alert("Clínica cadastrada com sucesso!");
+              window.location.href = "/dashboard";
+            } else {
+              alert("Erro ao cadastrar clínica.");
+            }
+          } catch (error) {
+            console.error("Erro ao registrar clínica:", error);
+            alert("Erro ao conectar com a API.");
+          }
         });
       });
     </script>
