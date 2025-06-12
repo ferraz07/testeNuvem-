@@ -166,6 +166,37 @@ def listar_medicos():
     conn.close()
     return data
 
+@app.post("/login")
+async def login(request: Request):
+    dados = await request.json()
+    email = dados.get("email")
+    senha = dados.get("senha")
+
+    db_url = os.environ["DATABASE_URL"]
+    conn = psycopg2.connect(db_url)
+    cur = conn.cursor()
+
+    cur.execute("SELECT ID FROM Usuario WHERE Email = %s AND Senha = %s", (email, senha))
+    user = cur.fetchone()
+
+    if not user:
+        cur.close()
+        conn.close()
+        return {"success": False, "message": "Credenciais inválidas"}
+
+    user_id = user[0]
+
+    cur.execute("SELECT 1 FROM Paciente WHERE UsuarioID = %s", (user_id,))
+    is_patient = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return {
+        "success": True,
+        "tipo": "paciente" if is_patient else "medico"
+    }
+
 # ==== AGENDA ====
 
 @app.post("/agendas")
