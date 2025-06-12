@@ -536,63 +536,63 @@
 
         // Patient form submission
         patientForm.addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const firstName = document.getElementById("patientFirstName").value;
-  const lastName = document.getElementById("patientLastName").value;
-  const fullName = `${firstName} ${lastName}`;
-  const email = document.getElementById("patientEmail").value;
-  const password = document.getElementById("patientPassword").value;
-  const confirmPassword = document.getElementById("patientConfirmPassword").value;
-  const dataNascimento = document.getElementById("patientDateOfBirth").value;
-  const terms = document.getElementById("patientTerms").checked;
-
-  // Validações simples
-  if (!firstName || !lastName || !email || !password || !dataNascimento) {
-    alert("Preencha todos os campos obrigatórios.");
-    return;
-  }
-
-  if (password !== confirmPassword) {
-    alert("As senhas não coincidem.");
-    return;
-  }
-
-  if (!terms) {
-    alert("Você deve aceitar os termos de uso.");
-    return;
-  }
-
-  try {
-    const payload = {
-      email: email,
-      senha: password,
-      nome: fullName,
-      cpf: "00000000000", // você pode adicionar um campo CPF no form se quiser
-      data_nascimento: dataNascimento
-    };
-
-    const res = await fetch("https://web-production-0688.up.railway.app/pacientes-com-usuario", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (res.ok) {
-      alert("Cadastro realizado com sucesso!");
-      window.location.href = "/dashboard";
-    } else {
-      const err = await res.json();
-      alert("Erro ao cadastrar: " + (err.detail || "Erro desconhecido."));
-    }
-
-  } catch (error) {
-    console.error("Erro:", error);
-    alert("Erro de rede ao tentar cadastrar.");
-  }
-});
+          e.preventDefault();
+          
+            const firstName = document.getElementById("patientFirstName").value;
+            const lastName = document.getElementById("patientLastName").value;
+            const fullName = `${firstName} ${lastName}`;
+            const email = document.getElementById("patientEmail").value;
+            const password = document.getElementById("patientPassword").value;
+            const confirmPassword = document.getElementById("patientConfirmPassword").value;
+            const dataNascimento = document.getElementById("patientDateOfBirth").value;
+            const terms = document.getElementById("patientTerms").checked;
+          
+            // Validações simples
+            if (!firstName || !lastName || !email || !password || !dataNascimento) {
+              alert("Preencha todos os campos obrigatórios.");
+              return;
+            }
+          
+            if (password !== confirmPassword) {
+              alert("As senhas não coincidem.");
+              return;
+            }
+          
+            if (!terms) {
+              alert("Você deve aceitar os termos de uso.");
+              return;
+            }
+          
+            try {
+              const payload = {
+                email: email,
+                senha: password,
+                nome: fullName,
+                cpf: "00000000000", // você pode adicionar um campo CPF no form se quiser
+                data_nascimento: dataNascimento
+              };
+          
+              const res = await fetch("https://web-production-0688.up.railway.app/pacientes-com-usuario", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+              });
+          
+              if (res.ok) {
+                alert("Cadastro realizado com sucesso!");
+                window.location.href = "/dashboard";
+              } else {
+                const err = await res.json();
+                alert("Erro ao cadastrar: " + (err.detail || "Erro desconhecido."));
+              }
+          
+            } catch (error) {
+              console.error("Erro:", error);
+              alert("Erro de rede ao tentar cadastrar.");
+            }
+          });
         // Clinic form submission
         clinicForm.addEventListener("submit", function (e) {
           e.preventDefault();
