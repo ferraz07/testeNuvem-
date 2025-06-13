@@ -32,6 +32,9 @@ class Medico(BaseModel):
     nome: str
     especialidade: str
     crm: str
+    logradouro: str
+    cidade: str
+    cep: int
 
 class Agenda(BaseModel):
     medico_id: int
