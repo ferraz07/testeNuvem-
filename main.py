@@ -150,7 +150,7 @@ def criar_medico(medico: Medico):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
-        "INSERT INTO Medico (UsuarioID, Nome, Especialidade, CRM, Logradouro, Cidade, CEP) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,)",
+        "INSERT INTO Medico (UsuarioID, Nome, Especialidade, CRM, Logradouro, Cidade, CEP) VALUES (%s, %s, %s, %s, %s, %s, %s)",
         (medico.usuario_id, medico.nome, medico.especialidade, medico.crm, medico.logradouro, medico.cidade, medico.cep)
     )
     conn.commit()
